@@ -1,0 +1,19 @@
+# 备份与截图
+_backup/
+_shots/
+
+# 开发/构建脚本
+_tools/
+
+# 个人文档（简历/职位描述/参考图，非网站内容）
+*.pptx
+xtool案例设计实习生JD.jpg
+简历参考模板.jpg
+Detail_Page_Reference.png
+
+# 本地图片（网站已改用图床链接；如需上传本地图片备份，删除下面这行）
+assets.image/
+
+# 系统文件
+.DS_Store
+Thumbs.db
