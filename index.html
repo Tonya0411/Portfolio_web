@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设计师作品集 | YT.Ocean</title>
+
+    <!-- Favicon：星河弯月 -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23000B24'/%3E%3Cpath d='M20.5 7.5a9 9 0 1 0 4 12.2 7.2 7.2 0 0 1-4-12.2z' fill='%23F5F100'/%3E%3Ccircle cx='23.4' cy='8.6' r='1.5' fill='%23F5F100'/%3E%3C/svg%3E">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome（jsDelivr 失败自动切换 cdnjs） -->
+    <script>
+        (function(){
+            var urls = ['https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css',
+                        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'];
+            var l = document.createElement('link');
+            l.rel = 'stylesheet';
+            l.href = urls[0];
+            l.onerror = function(){ l.onerror = null; l.href = urls[1]; };
+            document.head.appendChild(l);
+        })();
+    </script>
+    <!-- GSAP 动画库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- 字体：Space Grotesk + Noto Sans SC（自托管镜像） -->
+    <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deep: '#000B24',
+                        panel: '#061538',
+                        panel2: '#102452',
+                        line: '#2E4373',
+                        accent: '#F5F100',
+                        accent2: '#FFFC4D',
+                        ink: '#E9EEF9',
+                        muted: '#9AA7C7',
+                    },
+                    fontFamily: {
+                        sans: ['"Space Grotesk"', '"Noto Sans SC"', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --deep: #000B24;
+            --panel: #061538;
+            --panel2: #102452;
+            --line: #2E4373;
+            --accent: #F5F100;
+            --accent2: #FFFC4D;
+            --ink: #E9EEF9;
+            --muted: #9AA7C7;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--deep);
+            color: var(--ink);
+            overflow-x: hidden;
+        }
+
+        /* ===== 星空画布（固定背景） ===== */
+        #starfield {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        /* 银河带（CSS 静态兜底） */
+        #milkyway {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 900px 320px at 78% 18%, rgba(70, 96, 170, 0.20), transparent 70%),
+                radial-gradient(ellipse 700px 260px at 20% 82%, rgba(46, 67, 115, 0.16), transparent 70%),
+                radial-gradient(circle at 50% 50%, rgba(0, 11, 36, 0) 60%, rgba(0, 5, 18, 0.55) 100%);
+        }
+
+        /* 蓝白弥散渐变（缓慢漂移呼吸） */
+        #diffusion {
+            position: fixed; inset: -20%; z-index: 0; pointer-events: none;
+            mix-blend-mode: screen;
+            background:
+                radial-gradient(circle 38vmax at 26% 30%, rgba(96,138,255,.10), transparent 70%),
+                radial-gradient(circle 32vmax at 72% 62%, rgba(214,230,255,.08), transparent 70%),
+                radial-gradient(circle 30vmax at 55% 16%, rgba(70,110,220,.07), transparent 70%);
+            animation: diffuse 5s ease-in-out infinite alternate;
+            will-change: transform, opacity;
+        }
+        @keyframes diffuse {
+            0%   { transform: translate3d(-3%, -2%, 0) scale(2); opacity: .6; }
+            50%  { transform: translate3d(2.5%, 2%, 0) scale(1.12); opacity: .95; }
+            100% { transform: translate3d(-1.5%, 3%, 0) scale(1.05); opacity: .72; }
+        }
+        @media (prefers-reduced-motion: reduce) { #diffusion { animation: none; } }
+
+
+        /* 动态 Aurora 极光渐变（深蓝/白色，缓慢流动） */
+        #aurora { position: fixed; inset: -22%; z-index: 0; pointer-events: none;
+            mix-blend-mode: screen; }
+        #aurora .a-band { position: absolute; left: -30%; width: 160%; height: 52%;
+            filter: blur(56px); border-radius: 50%; will-change: transform; }
+        #aurora .a1 { top: -16%;
+            background: linear-gradient(100deg, transparent 12%,
+                rgba(16,36,92,.60) 34%, rgba(54,94,192,.46) 48%,
+                rgba(132,166,238,.30) 58%, rgba(226,235,255,.22) 66%,
+                rgba(255,255,255,.16) 71%, transparent 84%);
+            animation: aurora1 10s ease-in-out infinite alternate; }
+        #aurora .a2 { top: 26%;
+            background: linear-gradient(96deg, transparent 16%,
+                rgba(158,184,240,.26) 40%, rgba(238,243,255,.18) 50%,
+                rgba(22,40,100,.54) 62%, rgba(76,114,210,.36) 72%,
+                rgba(255,255,255,.13) 78%, transparent 90%);
+            animation: aurora2 10s ease-in-out infinite alternate; }
+        #aurora .a3 { bottom: -20%;
+            background: linear-gradient(104deg, transparent 12%,
+                rgba(18,38,94,.58) 36%, rgba(90,128,220,.38) 50%,
+                rgba(214,228,255,.20) 60%, rgba(255,255,255,.14) 66%, transparent 84%);
+            animation: aurora3 10s ease-in-out infinite alternate; }
+        #aurora .a4 { bottom: -38%;
+            background: linear-gradient(98deg, transparent 20%,
+                rgba(30,56,122,.46) 46%, rgba(168,194,246,.26) 58%,
+                rgba(255,255,255,.11) 66%, transparent 82%);
+            animation: aurora4 10s ease-in-out infinite alternate; }
+        @keyframes aurora1 {
+            0%   { transform: translateX(-9%) translateY(0)  rotate(-10deg) skewX(-4deg); }
+            50%  { transform: translateX(2%)  translateY(4%) rotate(-4deg)  skewX(2deg); }
+            100% { transform: translateX(10%) translateY(-2%) rotate(-7deg) skewX(-2deg); } }
+        @keyframes aurora2 {
+            0%   { transform: translateX(9%)  translateY(2%)  rotate(-6deg) skewX(3deg); }
+            50%  { transform: translateX(-4%) translateY(-4%) rotate(-9deg) skewX(-2deg); }
+            100% { transform: translateX(-11%) translateY(2%) rotate(-5deg) skewX(2deg); } }
+        @keyframes aurora3 {
+            0%   { transform: translateX(-8%) translateY(-3%) rotate(-11deg) skewX(2deg); }
+            50%  { transform: translateX(4%)  translateY(3%)  rotate(-6deg)  skewX(-3deg); }
+            100% { transform: translateX(9%)  translateY(-2%) rotate(-9deg) skewX(1deg); } }
+        @keyframes aurora4 {
+            0%   { transform: translateX(6%)  translateY(1%)  rotate(-8deg) skewX(-2deg); }
+            100% { transform: translateX(-9%) translateY(-3%) rotate(-4deg) skewX(3deg); } }
+        @media (prefers-reduced-motion: reduce) { #aurora { display: none; } }
+
+        /* 颗粒质感 */
+        #grain {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+        main { position: relative; z-index: 2; }
+
+        /* ===== 滚动条 ===== */
+        ::-webkit-scrollbar { width: 9px; }
+        ::-webkit-scrollbar-track { background: #03081a; }
+        ::-webkit-scrollbar-thumb { background: #2E4373; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3d5794; }
+
+        /* ===== 导航 ===== */
+        .navbar-fixed {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .nav-link { position: relative; color: var(--muted); transition: color .25s ease; }
+        .nav-link::after {
+            content: ''; position: absolute; left: 0; bottom: -6px; height: 2px; width: 0;
+            background: var(--accent); transition: width .25s ease;
+        }
+        .nav-link:hover { color: var(--ink); }
+        .nav-link:hover::after { width: 100%; }
+        /* ===== Works 下拉菜单 ===== */
+        .works-nav{position:relative;}
+        .works-menu{position:absolute;left:50%;top:100%;padding-top:.75rem;
+            transform:translateX(-50%) translateY(8px);opacity:0;visibility:hidden;pointer-events:none;
+            transition:opacity .22s ease,transform .22s ease,visibility .22s ease;}
+        .works-nav:hover .works-menu,.works-nav:focus-within .works-menu{
+            opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+        .works-menu-inner{background:rgba(6,21,56,.94);border:1px solid rgba(46,67,115,.7);
+            border-radius:16px;box-shadow:0 18px 50px rgba(0,3,16,.55);padding:.5rem;min-width:200px;
+            backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);}
+        .works-menu-inner a{display:block;padding:.6rem 1rem;border-radius:10px;font-size:.92rem;
+            color:var(--muted);white-space:nowrap;transition:background-color .18s ease,color .18s ease;}
+        .works-menu-inner a:hover{background:rgba(16,36,82,.8);color:var(--accent2);}
+        .works-menu-inner a.works-all{color:var(--ink);font-weight:500;}
+        /* 二级子菜单：悬停分类显示该分类下作品 */
+        .works-sub{position:relative;}
+        .works-sub>.works-cat{display:flex;align-items:center;justify-content:space-between;gap:.75rem;}
+        .works-sub>.works-cat::after{content:'\f054';font-family:'FontAwesome';font-size:.62rem;opacity:.55;}
+        .works-sub-menu{position:absolute;left:100%;top:0;padding-left:8px;
+            opacity:0;visibility:hidden;pointer-events:none;
+            transition:opacity .18s ease,visibility .18s ease;}
+        .works-sub:hover .works-sub-menu,.works-sub:focus-within .works-sub-menu{
+            opacity:1;visibility:visible;pointer-events:auto;}
+        .works-sub-menu .works-menu-inner{max-height:70vh;overflow-y:auto;}
+
+
+
+        /* ===== 按钮 ===== */
+        .btn-primary {
+            background: var(--accent); color: #0A1330; font-weight: 600;
+            border-radius: 12px; padding: 0.85rem 1.9rem; display: inline-block;
+            transition: transform .25s ease, box-shadow .25s ease, background-color .25s ease;
+        }
+        .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 8px 26px rgba(245, 241, 0, 0.22); }
+        .btn-ghost {
+            border: 1px solid var(--line); color: var(--ink); font-weight: 500;
+            border-radius: 12px; padding: 0.85rem 1.9rem; display: inline-block;
+            transition: border-color .25s ease, background-color .25s ease, transform .25s ease;
+        }
+        .btn-ghost:hover { border-color: var(--accent); background: rgba(245, 241, 0, 0.06); transform: translateY(-2px); }
+
+        /* ===== 章节眉标 ===== */
+        .eyebrow { display: flex; align-items: center; gap: 0.75rem; color: var(--accent); font-weight: 600; letter-spacing: 0.18em; }
+        .eyebrow::before { content: ''; width: 34px; height: 2px; background: var(--accent); }
+
+        /* ===== 作品卡片 ===== */
+        .work-card {
+            background: rgba(6, 21, 56, 0.66);
+            border: 1px solid rgba(46, 67, 115, 0.55);
+            border-radius: 20px; overflow: hidden;
+            transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+        }
+        .work-card:hover { transform: translateY(-6px); border-color: rgba(245, 241, 0, 0.55); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45); }
+        .work-card .thumb { position: relative; overflow: hidden; }
+        .work-card .thumb img { transition: transform .5s cubic-bezier(0.22, 1, 0.36, 1); }
+        .work-card:hover .thumb img { transform: scale(1.07); }
+        .work-card .thumb-overlay {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            background: rgba(0, 8, 26, 0); opacity: 0; transition: opacity .3s ease, background-color .3s ease;
+        }
+        .work-card:hover .thumb-overlay { opacity: 1; background: rgba(0, 8, 26, 0.32); }
+        .work-card .thumb-overlay span {
+            padding: 0.5rem 1.1rem; background: var(--accent); color: #0A1330;
+            font-size: 0.85rem; font-weight: 600; border-radius: 12px;
+            transform: translateY(10px); transition: transform .3s ease;
+        }
+        .work-card:hover .thumb-overlay span { transform: translateY(0); }
+
+        .tag-pill {
+            display: inline-block; padding: 0.4rem 1rem; border-radius: 999px;
+            font-size: 0.82rem; color: #E4EBFA; letter-spacing: .02em;
+            background: linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.05));
+            border: 1px solid rgba(255,255,255,.2);
+            backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.28), inset 0 -1px 1px rgba(0,0,0,.18), 0 6px 18px rgba(0,4,18,.35);
+        }
+        .tag-skill {
+            display: inline-block; padding: 0.45rem 1rem; border-radius: 999px;
+            font-size: 0.85rem; color: var(--ink);
+            background: rgba(16, 36, 82, 0.65); border: 1px solid rgba(46, 67, 115, 0.75);
+            transition: border-color .25s ease, color .25s ease;
+        }
+        .tag-skill:hover { border-color: var(--accent); color: var(--accent2); }
+
+        /* ===== 分类筛选 ===== */
+        .filter-btn {
+            padding: 0.55rem 1.3rem; border-radius: 999px; font-size: 0.9rem;
+            color: var(--muted); border: 1px solid var(--line);
+            transition: all .25s ease; cursor: pointer; white-space: nowrap;
+        }
+        .filter-btn:hover { color: var(--ink); border-color: var(--muted); }
+        .filter-btn.active { background: var(--accent); color: #0A1330; border-color: var(--accent); font-weight: 600; }
+
+        /* ===== 面板 / 表单 ===== */
+        .panel {
+            background: rgba(6, 21, 56, 0.72);
+            border: 1px solid rgba(46, 67, 115, 0.55);
+            border-radius: 20px;
+        }
+        /* 液态玻璃卡片（与小标签 tag-pill 同款效果） */
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.05));
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 20px;
+            backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.28), inset 0 -1px 1px rgba(0,0,0,.18), 0 6px 18px rgba(0,4,18,.35);
+        }
+        .field {
+            width: 100%; padding: 0.7rem 1rem; border-radius: 12px;
+            background: rgba(0, 11, 36, 0.6); border: 1px solid var(--line); color: var(--ink);
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+        .field:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(245, 241, 0, 0.15); }
+        .field::placeholder { color: #6B7AA0; }
+
+        /* ===== 灯箱 ===== */
+        #lightbox {
+            position: fixed; inset: 0; z-index: 100; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0, 4, 16, 0.94); padding: 4vh 4vw;
+        }
+        #lightbox.active { display: flex; }
+        #lightbox img { max-width: 92%; max-height: 84vh; object-fit: contain; border-radius: 12px; }
+        #lightbox .lb-caption { position: absolute; bottom: 26px; left: 0; right: 0; text-align: center; color: var(--muted); font-size: 0.95rem; }
+        #lightbox .lb-btn {
+            position: absolute; color: var(--ink); background: rgba(16, 36, 82, 0.7);
+            border: 1px solid var(--line); width: 48px; height: 48px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: background-color .2s ease, border-color .2s ease;
+        }
+        #lightbox .lb-btn:hover { background: rgba(245, 241, 0, 0.15); border-color: var(--accent); }
+        #lightbox .lb-close { top: 24px; right: 24px; }
+        #lightbox .lb-prev { left: 24px; top: 50%; transform: translateY(-50%); }
+        #lightbox .lb-next { right: 24px; top: 50%; transform: translateY(-50%); }
+
+        /* ===== Toast ===== */
+        #toast {
+            position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--accent); color: #0A1330; font-weight: 600;
+            padding: 0.75rem 1.5rem; border-radius: 8px; z-index: 120;
+            opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease;
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ===== 头像框 ===== */
+        .avatar-frame { position: relative; border-radius: 20px; overflow: hidden; border: 1px solid rgba(245, 241, 0, 0.35); }
+        .avatar-corner { position: absolute; width: 26px; height: 26px; border-color: var(--accent); z-index: 5; }
+
+        /* ===== 回到顶部 ===== */
+        #back-to-top {
+            position: fixed; bottom: 30px; right: 30px; z-index: 60;
+            width: 48px; height: 48px; border-radius: 50%;
+            background: var(--accent); color: #0A1330;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease, transform .3s ease;
+        }
+        #back-to-top:hover { transform: translateY(-3px); }
+        #back-to-top.show { opacity: 1; visibility: visible; }
+
+        /* 滚动揭示（初始隐藏态由 JS 加，无 JS 时内容可见） */
+        .reveal { opacity: 0; transform: translateY(26px);
+                  transition: opacity .65s cubic-bezier(.22,1,.36,1), transform .65s cubic-bezier(.22,1,.36,1); }
+        .reveal.in { opacity: 1; transform: none; }
+
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+
+/* ===== 分类横向轮播（自动滚动 + 手动横向滚动） ===== */
+.marquee-viewport{overflow-x:auto;overflow-y:hidden;position:relative;cursor:grab;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+  scrollbar-width:thin;scrollbar-color:#2E4373 #03081a;}
+.marquee-viewport::-webkit-scrollbar{height:8px;}
+.marquee-viewport::-webkit-scrollbar-track{background:#03081a;border-radius:4px;}
+.marquee-viewport::-webkit-scrollbar-thumb{background:#2E4373;border-radius:4px;}
+.marquee-viewport::-webkit-scrollbar-thumb:hover{background:#3d5794;}
+.marquee-viewport.dragging{cursor:grabbing;}
+.marquee-viewport.dragging,.marquee-viewport.dragging *{user-select:none;-webkit-user-select:none;}
+.marquee-track{display:flex;width:max-content;}
+.marquee-set{display:flex;gap:1.5rem;padding-right:1.5rem;flex-shrink:0;align-items:stretch;}
+.marquee-card{width:380px;flex-shrink:0;}
+.img-card{position:relative;display:block;border-radius:20px;overflow:hidden;border:1px solid rgba(46,67,115,.6);}
+.img-card img{display:block;transition:transform .5s cubic-bezier(.22,1,.36,1);}
+.img-card:hover img{transform:scale(1.06);}
+.img-meta{position:absolute;left:0;right:0;bottom:0;padding:1.15rem 1.25rem 1.05rem;
+  background:linear-gradient(to top,rgba(0,5,18,.85),rgba(0,5,18,0));
+  opacity:0;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease;}
+.img-card:hover .img-meta{opacity:1;transform:none;}
+.img-meta h4{font-weight:600;font-size:1.08rem;line-height:1.3;}
+@media(max-width:640px){.marquee-card{width:300px;}.marquee-set{gap:1rem;padding-right:1rem;}.img-card{border-radius:16px;}}
+@media (prefers-reduced-motion: reduce){
+  .marquee-viewport{-webkit-mask-image:none;mask-image:none;}
+}
+
+    </style>
+</head>
+
+<body class="font-sans antialiased">
+    <canvas id="starfield"></canvas>
+    <div id="milkyway"></div>
+    <div id="diffusion"></div>
+    <div id="aurora">
+        <div class="a-band a1"></div>
+        <div class="a-band a2"></div>
+        <div class="a-band a3"></div>
+        <div class="a-band a4"></div>
+    </div>
+    <div id="grain"></div>
+
+    <!-- ===== 导航栏 ===== -->
+    <nav id="navbar" class="navbar-fixed py-4">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex items-center justify-between">
+                <a href="#home" class="text-2xl font-bold tracking-wide">
+                    YT<span class="text-accent">.</span>Ocean
+                </a>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="nav-link" data-zh="首页" data-en="Home">首页</a>
+                                        <div class="works-nav">
+                        <a href="#works" class="nav-link" data-zh="作品" data-en="Works">作品</a>
+                        <div class="works-menu">
+                            <div class="works-menu-inner">
+                                <a href="#works" class="works-all" data-zh="全部作品" data-en="All Works">全部作品</a>
+                                <div class="works-sub">
+                                    <a href="#cat-physical" class="works-cat" data-zh="实体模型" data-en="Physical Models">实体模型</a>
+                                    <div class="works-sub-menu">
+                                        <div class="works-menu-inner">
+                                <a href="works/work1.html" data-zh="我的小世界" data-en="My Little World">我的小世界</a>
+                                <a href="works/work2.html" data-zh="幻梦场" data-en="Dreamscape">幻梦场</a>
+                                <a href="works/work3.html" data-zh="蝴蝶谷" data-en="Butterfly Valley">蝴蝶谷</a>
+                                <a href="works/work4.html" data-zh="日晚茶室" data-en="Sunset Teahouse">日晚茶室</a>
+                                <a href="works/work5.html" data-zh="幼儿园" data-en="Kindergarten">幼儿园</a>
+                                <a href="works/work6.html" data-zh="鹿隐·小住宅" data-en="Luyin House">鹿隐·小住宅</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="works-sub">
+                                    <a href="#cat-3d" class="works-cat" data-zh="3D 模型" data-en="3D Models">3D 模型</a>
+                                    <div class="works-sub-menu">
+                                        <div class="works-menu-inner">
+                                <a href="works/work7.html" data-zh="春光村民宿" data-en="Chunguang Village Homestay">春光村民宿</a>
+                                <a href="works/work8.html" data-zh="建筑系馆" data-en="Architectural department hall">建筑系馆</a>
+                                <a href="works/work9.html" data-zh="客运站" data-en="Coach Station">客运站</a>
+                                <a href="works/work10.html" data-zh="光之褶·小高层" data-en="The Lucent Fold Residence">光之褶·小高层</a>
+                                <a href="works/work11.html" data-zh="守竹轩·售卖亭" data-en="Shouzhuxuan Kiosk">守竹轩·售卖亭</a>
+                                <a href="works/work12.html" data-zh="AIGC 装配式部件空间练习" data-en="AIGC Prefab Spatial Study">AIGC 装配式部件空间练习</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="works-sub">
+                                    <a href="#cat-merchart" class="works-cat" data-zh="文创与艺术" data-en="Merch & Artworks">文创与艺术</a>
+                                    <div class="works-sub-menu">
+                                        <div class="works-menu-inner">
+                                <a href="works/work13.html" data-zh="石钟摆件" data-en="Stone Bell Ornament">石钟摆件</a>
+                                <a href="works/work14.html" data-zh="校园明信片" data-en="Campus Postcard Set">校园明信片</a>
+                                <a href="works/work15.html" data-zh="Zine | Taylor Swift 自制杂志" data-en="Zine | for Taylor Swift">Zine | Taylor Swift 自制杂志</a>
+                                <a href="works/work16.html" data-zh="你是哪颗星星" data-en="Which Star Are You">你是哪颗星星</a>
+                                <a href="works/work17.html" data-zh="坠入天堂" data-en="Fall into Heaven">坠入天堂</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#about" class="nav-link" data-zh="关于" data-en="About">关于</a>
+                    <a href="#contact" class="nav-link" data-zh="联系" data-en="Contact">联系</a>
+                    <button id="lang-toggle" class="filter-btn !py-1.5 !px-4" data-zh="EN" data-en="中">EN</button>
+                </div>
+
+                <div class="flex items-center gap-4 md:hidden">
+                    <button id="lang-toggle-m" class="filter-btn !py-1 !px-3 text-sm" data-zh="EN" data-en="中">EN</button>
+                    <button id="menu-toggle" class="text-ink focus:outline-none" aria-label="Menu">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="md:hidden hidden absolute top-full left-0 w-full bg-deep border-t border-line">
+            <div class="container mx-auto px-4 py-4 flex flex-col gap-1">
+                <a href="#home" class="block py-2.5 nav-link" data-zh="首页" data-en="Home">首页</a>
+                                <a href="#works" class="block py-2.5 nav-link" data-zh="作品" data-en="Works">作品</a>
+                <a href="#cat-physical" class="block py-1.5 pl-5 text-sm text-muted" data-zh="实体模型" data-en="Physical Models">实体模型</a>
+                <a href="#cat-3d" class="block py-1.5 pl-5 text-sm text-muted" data-zh="3D 模型" data-en="3D Models">3D 模型</a>
+                <a href="#cat-merchart" class="block py-1.5 pl-5 text-sm text-muted" data-zh="文创与艺术" data-en="Merch & Artworks">文创与艺术</a>
+                <a href="#about" class="block py-2.5 nav-link" data-zh="关于" data-en="About">关于</a>
+                <a href="#contact" class="block py-2.5 nav-link" data-zh="联系" data-en="Contact">联系</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+    <!-- ===== Hero 区域 ===== -->
+    <section id="home" class="min-h-screen flex items-center pt-24 pb-16">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-14">
+                <div class="max-w-2xl md:w-1/2">
+                    <h1 class="font-bold mb-7 leading-[1.08]" style="font-size: clamp(3.2rem, 7vw, 6rem);">
+                        <span data-zh="你好，我是" data-en="Hi, I'm">你好，我是</span><br>
+                        <span class="text-accent">YT.Ocean</span>
+                    </h1>
+                    <p class="hero-sub text-xl md:text-2xl text-muted mb-9 leading-relaxed"
+                       data-zh="建筑学大四学生，设计师、艺术爱好者。"
+                       data-en="A 4th-year B.Arch candidate, designer, and art lover.">
+                        建筑学大四学生，设计师、艺术爱好者。
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#works" class="btn-primary" data-zh="查看作品" data-en="View My Work">查看作品</a>
+                        <a href="#about" class="btn-ghost" data-zh="关于我" data-en="About Me">关于我</a>
+                    </div>
+                </div>
+
+                <div class="md:w-[37%] w-[76%] md:mr-[3%]">
+                    <div class="avatar-frame">
+                        <span class="avatar-corner border-t-2 border-l-2 top-3 left-3"></span>
+                        <span class="avatar-corner border-t-2 border-r-2 top-3 right-3"></span>
+                        <span class="avatar-corner border-b-2 border-l-2 bottom-3 left-3"></span>
+                        <span class="avatar-corner border-b-2 border-r-2 bottom-3 right-3"></span>
+                        <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/3%EF%BC%9A4%E8%87%AA%E6%8B%8D.jpg"
+                             data-zh-alt="YT.Ocean 的头像" data-en-alt="Portrait of YT.Ocean"
+                             alt="YT.Ocean 的头像" class="w-full aspect-[3/4] object-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ===== 作品展示区（3 分类纵向堆叠 + 同类横向轮播） ===== -->
+    <section id="works" class="py-24 md:py-32">
+        <div class="container mx-auto px-4 md:px-8 mb-16 md:mb-20">
+            <p class="eyebrow justify-center mb-5 text-sm" data-zh="作品" data-en="WORKS">作品</p>
+            <h2 class="font-bold text-center text-4xl md:text-6xl tracking-tight"
+                data-zh="精选作品" data-en="Selected Works">精选作品</h2>
+            <p class="text-muted text-center max-w-2xl mx-auto mt-6 text-base md:text-lg leading-relaxed"
+               data-zh="实体模型、3D 建模、自制文创与艺术作品，记录从图纸到实体的完整创作。"
+               data-en="Physical models, 3D modeling, selfmade merch and artworks — documenting creation from drawing to a physical object.">
+                实体模型、3D 建模、自制文创与艺术作品，记录从图纸到实体的完整创作。
+            </p>
+        </div>
+        <div class="space-y-16 md:space-y-24">
+        <div id="cat-physical" class="cat-block">
+            <div class="container mx-auto px-4 md:px-8 mb-7 text-center">
+                <h3 class="font-bold text-2xl md:text-4xl tracking-tight" data-zh="实体模型" data-en="Physical Models">实体模型</h3>
+            </div>
+            <div class="marquee-viewport">
+                <div class="marquee-track">
+                    <div class="marquee-set">
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work1.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E5%AE%BF%E8%88%8D%E6%94%B9%E9%80%A0-%E6%88%91%E7%9A%84%E5%B0%8F%E4%B8%96%E7%95%8C.jpg" alt="My Little World"
+                                 data-zh-alt="我的小世界" data-en-alt="My Little World"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="我的小世界" data-en="My Little World">我的小世界</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2024.04</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work2.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E8%8D%89%E5%9C%B0%E4%B8%8E%E5%B1%95%E8%A7%88.jpg" alt="Dreamscape"
+                                 data-zh-alt="幻梦场" data-en-alt="Dreamscape"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="幻梦场" data-en="Dreamscape">幻梦场</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2024.06</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work3.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E5%B1%B1%E8%B0%B7.jpg" alt="Butterfly Valley"
+                                 data-zh-alt="蝴蝶谷" data-en-alt="Butterfly Valley"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="蝴蝶谷" data-en="Butterfly Valley">蝴蝶谷</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2023.12</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work4.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E6%97%A5%E6%99%9A%E8%8C%B6%E5%AE%A4.jpg" alt="Sunset Teahouse"
+                                 data-zh-alt="日晚茶室" data-en-alt="Sunset Teahouse"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="日晚茶室" data-en="Sunset Teahouse">日晚茶室</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2024.10</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work5.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E5%B9%BC%E5%84%BF%E5%9B%AD.jpg" alt="Kindergarten"
+                                 data-zh-alt="幼儿园" data-en-alt="Kindergarten"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="幼儿园" data-en="Kindergarten">幼儿园</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.04</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work6.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E5%B0%8F%E4%BD%8F%E5%AE%85-%E9%B9%BF%E9%9A%90.jpg" alt="Luyin House"
+                                 data-zh-alt="鹿隐·小住宅" data-en-alt="Luyin House"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="鹿隐·小住宅" data-en="Luyin House">鹿隐·小住宅</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.01</p>
+                            </div>
+                        </a>
+                    </article>
+                    </div>
+                    <div class="marquee-set">
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work1.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E5%AE%BF%E8%88%8D%E6%94%B9%E9%80%A0-%E6%88%91%E7%9A%84%E5%B0%8F%E4%B8%96%E7%95%8C.jpg" alt="My Little World"
+                                 data-zh-alt="我的小世界" data-en-alt="My Little World"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="我的小世界" data-en="My Little World">我的小世界</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2024.04</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work2.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E8%8D%89%E5%9C%B0%E4%B8%8E%E5%B1%95%E8%A7%88.jpg" alt="Dreamscape"
+                                 data-zh-alt="幻梦场" data-en-alt="Dreamscape"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="幻梦场" data-en="Dreamscape">幻梦场</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2024.06</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work3.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E5%B1%B1%E8%B0%B7.jpg" alt="Butterfly Valley"
+                                 data-zh-alt="蝴蝶谷" data-en-alt="Butterfly Valley"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="蝴蝶谷" data-en="Butterfly Valley">蝴蝶谷</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2023.12</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work4.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E6%97%A5%E6%99%9A%E8%8C%B6%E5%AE%A4.jpg" alt="Sunset Teahouse"
+                                 data-zh-alt="日晚茶室" data-en-alt="Sunset Teahouse"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="日晚茶室" data-en="Sunset Teahouse">日晚茶室</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2024.10</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work5.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E5%B9%BC%E5%84%BF%E5%9B%AD.jpg" alt="Kindergarten"
+                                 data-zh-alt="幼儿园" data-en-alt="Kindergarten"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="幼儿园" data-en="Kindergarten">幼儿园</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.04</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work6.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/%E5%B0%8F%E4%BD%8F%E5%AE%85-%E9%B9%BF%E9%9A%90.jpg" alt="Luyin House"
+                                 data-zh-alt="鹿隐·小住宅" data-en-alt="Luyin House"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="鹿隐·小住宅" data-en="Luyin House">鹿隐·小住宅</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.01</p>
+                            </div>
+                        </a>
+                    </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cat-3d" class="cat-block">
+            <div class="container mx-auto px-4 md:px-8 mb-7 text-center">
+                <h3 class="font-bold text-2xl md:text-4xl tracking-tight" data-zh="3D 模型" data-en="3D Models">3D 模型</h3>
+            </div>
+            <div class="marquee-viewport">
+                <div class="marquee-track">
+                    <div class="marquee-set">
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work7.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Chunguang/RenderG00.png" alt="Chunguang Village Homestay"
+                                 data-zh-alt="春光村民宿" data-en-alt="Chunguang Village Homestay"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="春光村民宿" data-en="Chunguang Village Homestay">春光村民宿</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.07</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work8.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Arch_Depa/Parameterization%20(0).png" alt="Architectural department hall"
+                                 data-zh-alt="建筑系馆" data-en-alt="Architectural department hall"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="建筑系馆" data-en="Architectural department hall">建筑系馆</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.11</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work9.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Coach_Station/Render_00.jpg" alt="Coach Station"
+                                 data-zh-alt="客运站" data-en-alt="Coach Station"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="客运站" data-en="Coach Station">客运站</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2026.04</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work10.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Mid_rise/Render_00_TypeA.jpg" alt="The Lucent Fold Residence"
+                                 data-zh-alt="光之褶·小高层" data-en-alt="The Lucent Fold Residence"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="光之褶·小高层" data-en="The Lucent Fold Residence">光之褶·小高层</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.01</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work11.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Kiosk/Render_00.jpg" alt="Shouzhuxuan Kiosk"
+                                 data-zh-alt="守竹轩·售卖亭" data-en-alt="Shouzhuxuan Kiosk"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="守竹轩·售卖亭" data-en="Shouzhuxuan Kiosk">守竹轩·售卖亭</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2026.07</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work12.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/AIGC/ai-01.jpeg" alt="AIGC Prefab Spatial Study"
+                                 data-zh-alt="AIGC 装配式部件空间练习" data-en-alt="AIGC Prefab Spatial Study"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="AIGC 装配式部件空间练习" data-en="AIGC Prefab Spatial Study">AIGC 装配式部件空间练习</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.12</p>
+                            </div>
+                        </a>
+                    </article>
+                    </div>
+                    <div class="marquee-set">
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work7.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Chunguang/RenderG00.png" alt="Chunguang Village Homestay"
+                                 data-zh-alt="春光村民宿" data-en-alt="Chunguang Village Homestay"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="春光村民宿" data-en="Chunguang Village Homestay">春光村民宿</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.07</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work8.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Arch_Depa/Parameterization%20(0).png" alt="Architectural department hall"
+                                 data-zh-alt="建筑系馆" data-en-alt="Architectural department hall"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="建筑系馆" data-en="Architectural department hall">建筑系馆</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.11</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work9.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Coach_Station/Render_00.jpg" alt="Coach Station"
+                                 data-zh-alt="客运站" data-en-alt="Coach Station"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="客运站" data-en="Coach Station">客运站</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2026.04</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work10.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Mid_rise/Render_00_TypeA.jpg" alt="The Lucent Fold Residence"
+                                 data-zh-alt="光之褶·小高层" data-en-alt="The Lucent Fold Residence"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="光之褶·小高层" data-en="The Lucent Fold Residence">光之褶·小高层</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.01</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work11.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Kiosk/Render_00.jpg" alt="Shouzhuxuan Kiosk"
+                                 data-zh-alt="守竹轩·售卖亭" data-en-alt="Shouzhuxuan Kiosk"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="守竹轩·售卖亭" data-en="Shouzhuxuan Kiosk">守竹轩·售卖亭</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2026.07</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work12.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/AIGC/ai-01.jpeg" alt="AIGC Prefab Spatial Study"
+                                 data-zh-alt="AIGC 装配式部件空间练习" data-en-alt="AIGC Prefab Spatial Study"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="AIGC 装配式部件空间练习" data-en="AIGC Prefab Spatial Study">AIGC 装配式部件空间练习</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.12</p>
+                            </div>
+                        </a>
+                    </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cat-merchart" class="cat-block">
+            <div class="container mx-auto px-4 md:px-8 mb-7 text-center">
+                <h3 class="font-bold text-2xl md:text-4xl tracking-tight" data-zh="文创与艺术" data-en="Merch & Artworks">文创与艺术</h3>
+            </div>
+            <div class="marquee-viewport">
+                <div class="marquee-track">
+                    <div class="marquee-set">
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work13.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/StoneBell/Details_00.jpg" alt="Stone Bell Ornament"
+                                 data-zh-alt="石钟摆件" data-en-alt="Stone Bell Ornament"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="石钟摆件" data-en="Stone Bell Ornament">石钟摆件</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.10</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work14.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Postcard/Postcard_00.png" alt="Campus Postcard Set"
+                                 data-zh-alt="校园明信片" data-en-alt="Campus Postcard Set"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="校园明信片" data-en="Campus Postcard Set">校园明信片</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2026.03</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work15.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Zine/Cover.jpg" alt="Zine | for Taylor Swift"
+                                 data-zh-alt="Zine | Taylor Swift 自制杂志" data-en-alt="Zine | for Taylor Swift"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="Zine | Taylor Swift 自制杂志" data-en="Zine | for Taylor Swift">Zine | Taylor Swift 自制杂志</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2024.11</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work16.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Artworks/Whichstarareu_00.jpg" alt="Which Star Are You"
+                                 data-zh-alt="你是哪颗星星" data-en-alt="Which Star Are You"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="你是哪颗星星" data-en="Which Star Are You">你是哪颗星星</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2026.04</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work17.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Artworks/FallintoHeaven.jpg" alt="Fall into Heaven"
+                                 data-zh-alt="坠入天堂" data-en-alt="Fall into Heaven"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="坠入天堂" data-en="Fall into Heaven">坠入天堂</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2026.05</p>
+                            </div>
+                        </a>
+                    </article>
+                    </div>
+                    <div class="marquee-set">
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work13.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/StoneBell/Details_00.jpg" alt="Stone Bell Ornament"
+                                 data-zh-alt="石钟摆件" data-en-alt="Stone Bell Ornament"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="石钟摆件" data-en="Stone Bell Ornament">石钟摆件</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2025.10</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work14.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Postcard/Postcard_00.png" alt="Campus Postcard Set"
+                                 data-zh-alt="校园明信片" data-en-alt="Campus Postcard Set"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="校园明信片" data-en="Campus Postcard Set">校园明信片</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2026.03</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work15.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Zine/Cover.jpg" alt="Zine | for Taylor Swift"
+                                 data-zh-alt="Zine | Taylor Swift 自制杂志" data-en-alt="Zine | for Taylor Swift"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="Zine | Taylor Swift 自制杂志" data-en="Zine | for Taylor Swift">Zine | Taylor Swift 自制杂志</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2024.11</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work16.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Artworks/Whichstarareu_00.jpg" alt="Which Star Are You"
+                                 data-zh-alt="你是哪颗星星" data-en-alt="Which Star Are You"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="你是哪颗星星" data-en="Which Star Are You">你是哪颗星星</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2026.04</p>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="marquee-card">
+                        <a class="img-card" href="works/work17.html">
+                            <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/Artworks/FallintoHeaven.jpg" alt="Fall into Heaven"
+                                 data-zh-alt="坠入天堂" data-en-alt="Fall into Heaven"
+                                 class="w-full h-60 md:h-80 object-cover" loading="lazy">
+                            <div class="img-meta">
+                                <h4 data-zh="坠入天堂" data-en="Fall into Heaven">坠入天堂</h4>
+                                <p class="text-accent2 text-sm mt-0.5">2026.05</p>
+                            </div>
+                        </a>
+                    </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+    <!-- ===== 关于我 ===== -->
+    <section id="about" class="py-24">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex flex-col md:flex-row items-stretch gap-12">
+                <div class="md:w-1/3 w-full">
+                    <div class="avatar-frame">
+                        <span class="avatar-corner border-t-2 border-l-2 top-3 left-3"></span>
+                        <span class="avatar-corner border-t-2 border-r-2 top-3 right-3"></span>
+                        <span class="avatar-corner border-b-2 border-l-2 bottom-3 left-3"></span>
+                        <span class="avatar-corner border-b-2 border-r-2 bottom-3 right-3"></span>
+                        <img src="https://pub-96f2865f41374b57be6577bcc95f02f7.r2.dev/3%EF%BC%9A4%E8%87%AA%E6%8B%8D.jpg" alt="YT.Ocean"
+                             data-zh-alt="YT.Ocean" data-en-alt="YT.Ocean"
+                             class="w-full aspect-[3/4] object-cover">
+                    </div>
+                </div>
+
+                <div class="md:w-2/3 w-full flex flex-col">
+                    <p class="eyebrow mb-5 text-sm" data-zh="关于" data-en="ABOUT">关于</p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6" data-zh="关于我" data-en="About Me">关于我</h2>
+                    <p class="text-muted mb-10 leading-[1.9]"
+                       data-zh="我是一名建筑学大四学生，具备建筑学训练出的空间审美与极强动手实操能力，熟练使用 Rhino 及前沿 AI 生图工具；热衷于手作与多材料探索，能高效完成从创意图纸到 DIY 实体的全流程制作。"
+                       data-en="I'm a 4th-year B.Arch candidate with a spatial sensibility trained through architecture and strong hands-on making skills. Fluent in Rhino and cutting-edge AI image tools, I'm passionate about craft and exploring multiple materials, taking work efficiently from creative drawing to a DIY physical object.">
+                        我是一名建筑学大四学生，具备建筑学训练出的空间审美与极强动手实操能力，熟练使用 Rhino 及前沿 AI 生图工具；热衷于手作与多材料探索，能高效完成从创意图纸到 DIY 实体的全流程制作。
+                    </p>
+
+                    <h3 class="text-2xl font-semibold mb-4" data-zh="技能" data-en="Skills">技能</h3>
+                    <div class="flex flex-wrap gap-2.5 mb-12">
+                        <span class="tag-pill" data-zh="空间设计" data-en="Spatial Design">空间设计</span>
+                        <span class="tag-pill" data-zh="家具设计" data-en="Furniture Design">家具设计</span>
+                        <span class="tag-pill" data-zh="3D 设计" data-en="3D Design">3D 设计</span>
+                        <span class="tag-pill" data-zh="平面设计" data-en="Graphic Design">平面设计</span>
+                        <span class="tag-pill">Rhino</span>
+                        <span class="tag-pill">Grasshopper</span>
+                        <span class="tag-pill">SketchUp</span>
+                        <span class="tag-pill">CAD</span>
+                        <span class="tag-pill" data-zh="手绘" data-en="Hand Drawing">手绘</span>
+                        <span class="tag-pill">Photoshop</span>
+                        <span class="tag-pill">NanoBanana</span>
+                        <span class="tag-pill">Stable Diffusion</span>
+                        <span class="tag-pill">DeepSeek Harness</span>
+                        <span class="tag-pill">AI</span>
+                        <span class="tag-pill">Ai</span>
+                        <span class="tag-pill">Id</span>
+                        <span class="tag-pill">D5</span>
+                    </div>
+
+                    <div class="mt-auto pt-8">
+                        <h3 class="text-2xl font-semibold mb-5" data-zh="教育经历" data-en="Education">教育经历</h3>
+                        <div class="glass-panel p-6 relative pl-9">
+                            <span class="absolute left-[11px] top-7 w-3 h-3 rounded-full bg-accent"></span>
+                            <span class="absolute left-[16px] top-10 bottom-4 w-px bg-line"></span>
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1">
+                                <h4 class="font-semibold text-lg" data-zh="建筑学（本科在读）" data-en="Architecture (B.Arch Candidate)">建筑学（本科在读）</h4>
+                                <p class="text-muted text-sm" data-zh="2023 – 2028（预计毕业）" data-en="2023 – 2028 (Expected)">2023 – 2028（预计毕业）</p>
+                            </div>
+                            <p class="text-muted text-sm mt-1">五邑大学 · Wuyi University</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 联系方式 ===== -->
+    <section id="contact" class="py-24">
+        <div class="container mx-auto px-4 md:px-8">
+            <p class="eyebrow justify-center mb-5 text-sm" data-zh="联系" data-en="CONTACT">联系</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-14 text-center" data-zh="取得联系" data-en="Get In Touch">取得联系</h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <!-- 联系信息 -->
+                <div class="flex flex-col gap-6">
+                    <a href="mailto:ytocean.11.22@gmail.com" class="panel p-6 flex items-center gap-5 hover:border-accent transition-colors group">
+                        <span class="w-12 h-12 rounded-full bg-panel2 border border-line flex items-center justify-center text-accent shrink-0">
+                            <i class="fa fa-envelope text-lg"></i>
+                        </span>
+                        <span>
+                            <span class="block text-sm text-muted mb-1" data-zh="邮箱" data-en="Email">邮箱</span>
+                            <span class="font-medium group-hover:text-accent2 transition-colors">ytocean.11.22@gmail.com</span>
+                        </span>
+                    </a>
+
+                    <div class="panel p-6 flex items-center gap-5">
+                        <span class="w-12 h-12 rounded-full bg-panel2 border border-line flex items-center justify-center text-accent shrink-0">
+                            <i class="fa fa-weixin text-lg"></i>
+                        </span>
+                        <span class="grow">
+                            <span class="block text-sm text-muted mb-1" data-zh="微信" data-en="WeChat">微信</span>
+                            <span id="wechat-id" class="font-medium select-all">YT18163463940</span>
+                        </span>
+                        <button id="copy-wechat" class="filter-btn !py-2 !px-4 text-sm shrink-0" data-zh="复制" data-en="Copy">复制</button>
+                    </div>
+
+                    <div class="panel p-6">
+                        <p class="text-sm text-muted leading-relaxed"
+                           data-zh="欢迎通过邮件或微信与我联系，合作、交流或项目邀约都非常期待。"
+                           data-en="Feel free to reach out via email or WeChat — I look forward to collaborations, exchanges, and project invitations.">
+                            欢迎通过邮件或微信与我联系，合作、交流或项目邀约都非常期待。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 留言表单（mailto 跳转） -->
+                <div class="panel p-8">
+                    <h3 class="text-3xl font-semibold mb-6" data-zh="给我留言" data-en="Send Me a Message">给我留言</h3>
+                    <form id="contact-form" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label for="name" class="block text-sm text-muted mb-1.5" data-zh="姓名" data-en="Name">姓名</label>
+                                <input type="text" id="name" name="name" class="field" required>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm text-muted mb-1.5" data-zh="邮箱" data-en="Email">邮箱</label>
+                                <input type="email" id="email" name="email" class="field" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="subject" class="block text-sm text-muted mb-1.5" data-zh="主题" data-en="Subject">主题</label>
+                            <input type="text" id="subject" name="subject" class="field">
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm text-muted mb-1.5" data-zh="留言内容" data-en="Message">留言内容</label>
+                            <textarea id="message" name="message" rows="5" class="field" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary w-full text-center" data-zh="发送邮件" data-en="Send Email">发送邮件</button>
+                        <p class="text-xs text-muted text-center" data-zh="提交后将自动打开你的邮件客户端。" data-en="Submitting will open your email client automatically.">提交后将自动打开你的邮件客户端。</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    </main>
+    <!-- ===== 页脚 ===== -->
+    <footer class="py-12 border-t border-line" style="background:#020717;">
+        <div class="container mx-auto px-4 md:px-8 text-center">
+            <h3 class="text-2xl font-bold">YT<span class="text-accent">.</span>Ocean</h3>
+            <p class="text-muted mt-2 text-sm" data-zh="建筑学大四学生 · 设计师 · 艺术爱好者" data-en="B.Arch Candidate · Designer · Art Lover">建筑学大四学生 · 设计师 · 艺术爱好者</p>
+            <div class="flex justify-center gap-4 mt-5">
+                <a href="mailto:ytocean.11.22@gmail.com" aria-label="Email" class="w-11 h-11 rounded-full border border-line flex items-center justify-center text-muted hover:text-accent hover:border-accent transition-colors">
+                    <i class="fa fa-envelope"></i>
+                </a>
+                <a href="#contact" aria-label="WeChat" class="w-11 h-11 rounded-full border border-line flex items-center justify-center text-muted hover:text-accent hover:border-accent transition-colors">
+                    <i class="fa fa-weixin"></i>
+                </a>
+            </div>
+            <div class="border-t border-line mt-8 pt-7 text-center text-muted text-sm">
+                <p>© 2026 YT.Ocean. <span data-zh="保留所有权利。" data-en="All rights reserved.">保留所有权利。</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部 -->
+    <button id="back-to-top" aria-label="Back to top">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <!-- Toast -->
+    <div id="toast" role="status"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ============ 双语切换 ============ */
+        let lang = localStorage.getItem('lang') || 'en';
+        function applyLang() {
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+            document.querySelectorAll('[data-zh]').forEach(el => {
+                const t = el.getAttribute('data-' + lang);
+                if (t != null) el.textContent = t;
+            });
+            document.querySelectorAll('[data-zh-alt]').forEach(el => {
+                const t = el.getAttribute('data-' + lang + '-alt');
+                if (t != null) el.alt = t;
+            });
+        }
+        applyLang();
+        function toggleLang() {
+            lang = lang === 'zh' ? 'en' : 'zh';
+            localStorage.setItem('lang', lang);
+            applyLang();
+        }
+        document.getElementById('lang-toggle').addEventListener('click', toggleLang);
+        document.getElementById('lang-toggle-m').addEventListener('click', toggleLang);
+
+        /* ============ 移动端菜单 ============ */
+        const mobileMenu = document.getElementById('mobile-menu');
+        document.getElementById('menu-toggle').addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+        /* ============ 平滑滚动 ============ */
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    window.scrollTo({ top: target.offsetTop - 74, behavior: reduced ? 'auto' : 'smooth' });
+                }
+            });
+        });
+
+        /* ============ 导航栏滚动状态 ============ */
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 40) {
+                navbar.style.background = 'rgba(3, 10, 28, 0.55)';
+                navbar.style.backdropFilter = 'blur(16px) saturate(160%)';
+                navbar.style.webkitBackdropFilter = 'blur(16px) saturate(160%)';
+                navbar.style.boxShadow = '0 2px 14px rgba(0,0,0,.35)';
+            } else {
+                navbar.style.background = 'transparent';
+                navbar.style.backdropFilter = 'none';
+                navbar.style.webkitBackdropFilter = 'none';
+                navbar.style.boxShadow = 'none';
+            }
+        });
+
+        /* ============ 回到顶部 ============ */
+        const btt = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => btt.classList.toggle('show', window.scrollY > 500));
+        btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' }));
+
+        /* ============ Toast ============ */
+        const toast = document.getElementById('toast');
+        let toastTimer;
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+
+        /* ============ 星空 Canvas（闪烁星点 + 流星） ============ */
+        try {
+            const canvas = document.getElementById('starfield');
+            const ctx = canvas.getContext('2d');
+            let stars = [], meteors = [], nextMeteor = 0, frame = 0;
+
+            function initStars(){
+                const count = Math.min(240, Math.floor(canvas.width*canvas.height/9500));
+                stars = [];
+                for (let i=0;i<count;i++) stars.push({
+                    x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                    r: Math.random()*1.3+0.3, a: Math.random()*0.55+0.25,
+                    tw: Math.random()*Math.PI*2, sp: Math.random()*0.015+0.004,
+                    warm: Math.random()<0.16
+                });
+            }
+            function resize(){
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initStars();
+            }
+            function spawnMeteor(){
+                const ang = (Math.PI*0.22) + Math.random()*Math.PI*0.16;   // 20°–38°，统一左上→右下
+                const speed = Math.random()*5+8;
+                meteors.push({
+                    x: -40 + Math.random()*canvas.width*0.6,
+                    y: -60 - Math.random()*canvas.height*0.18,
+                    ux: Math.cos(ang)*speed, uy: Math.sin(ang)*speed,
+                    len: Math.random()*120+90, life: 0,
+                    maxLife: Math.random()*30+70
+                });
+            }
+            function drawMeteor(m){
+                const tx = m.x - m.ux/ (Math.hypot(m.ux,m.uy)) * m.len;
+                const ty = m.y - m.uy/ (Math.hypot(m.ux,m.uy)) * m.len;
+                const fadeIn = Math.min(1, m.life/10);
+                const fadeOut = Math.min(1, (m.maxLife-m.life)/18);
+                const alpha = Math.max(0, Math.min(fadeIn, fadeOut));
+                const g = ctx.createLinearGradient(m.x, m.y, tx, ty);
+                g.addColorStop(0, 'rgba(255,255,255,'+(0.9*alpha)+')');
+                g.addColorStop(0.25, 'rgba(220,230,255,'+(0.5*alpha)+')');
+                g.addColorStop(1, 'rgba(220,230,255,0)');
+                ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(tx, ty); ctx.stroke();
+                ctx.globalAlpha = alpha; ctx.fillStyle = '#FFFFFF';
+                ctx.beginPath(); ctx.arc(m.x, m.y, 1.7, 0, Math.PI*2); ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+            function paintStars(alphaFn){
+                stars.forEach(s=>{
+                    ctx.globalAlpha = alphaFn(s);
+                    ctx.fillStyle = s.warm ? '#FFFC4D' : '#DCE6FF';
+                    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+                });
+                ctx.globalAlpha = 1;
+            }
+            function tick(){
+                frame++;
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                paintStars(s=>{
+                    s.tw += s.sp;
+                    return Math.max(0.05, Math.min(1, s.a + Math.sin(s.tw)*0.25));
+                });
+                if (frame >= nextMeteor){
+                    spawnMeteor();
+                    nextMeteor = frame + Math.random()*230 + 170;   // 适中频率
+                }
+                meteors.forEach(m=>{
+                    m.x += m.ux; m.y += m.uy; m.life++;
+                    drawMeteor(m);
+                });
+                meteors = meteors.filter(m=>m.life < m.maxLife &&
+                    m.y < canvas.height+120 && m.x < canvas.width+160);
+                requestAnimationFrame(tick);
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            if (reduced) paintStars(s=>s.a); else tick();
+        } catch(e){ /* Canvas 不可用时由 CSS 银河带兜底 */ }
+
+        /* ============ 复制微信号 ============ */
+        document.getElementById('copy-wechat').addEventListener('click', async () => {
+            const text = 'YT18163463940';
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (e) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); } catch (_) {}
+                ta.remove();
+            }
+            showToast(lang === 'zh' ? '已复制微信号' : 'WeChat ID copied');
+        });
+
+        /* ============ 联系表单（mailto 跳转） ============ */
+        document.getElementById('contact-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value.trim() ||
+                (lang === 'zh' ? '来自作品集网站的留言' : 'Message from portfolio site');
+            const message = document.getElementById('message').value.trim();
+            const tpl = lang === 'zh' ? '姓名：%N\n邮箱：%E\n\n%M' : 'Name: %N\nEmail: %E\n\n%M';
+            const body = tpl.replace('%N', name).replace('%E', email).replace('%M', message);
+            window.location.href = 'mailto:ytocean.11.22@gmail.com?subject=' +
+                encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            showToast(lang === 'zh' ? '正在打开邮件客户端' : 'Opening your email client');
+        });
+
+        /* ============ 滚动揭示（IntersectionObserver） ============ */
+        const revealEls = [];
+        function setupReveal(el, delay) {
+            if (reduced) return;
+            el.classList.add('reveal');
+            if (delay) el.style.transitionDelay = delay + 'ms';
+            revealEls.push(el);
+        }
+        document.querySelectorAll('.cat-block').forEach((el) => setupReveal(el, 0));
+        ['#about .avatar-frame', '#about h2', '#about > div > div > p', '#about .tag-pill', '#about .panel',
+         '#contact h2', '#contact .panel'].forEach(sel =>
+            document.querySelectorAll(sel).forEach(el => setupReveal(el))
+        );
+        if (!reduced && 'IntersectionObserver' in window) {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(en => {
+                    if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+            revealEls.forEach(el => io.observe(el));
+        }
+
+        /* ============ 分类轮播：自动滚动 + 手动横向滚动 ============ */
+        document.querySelectorAll('.marquee-viewport').forEach(vp => {
+            const track = vp.querySelector('.marquee-track');
+            if (!track) return;
+            let raf = null, hover = false, dragging = false, pauseUntil = 0;
+            let down = false, moved = false, sx = 0, sc = 0, suppressClick = false;
+            const SPEED = 1.6; // 每帧像素（约 42px/s @60fps）
+
+            function half() { return track.scrollWidth / 2; }
+            function hold(ms) { pauseUntil = Date.now() + ms; }
+
+            function step() {
+                if (!hover && !dragging && Date.now() > pauseUntil) {
+                    vp.scrollLeft += SPEED;
+                    const h = half();
+                    if (vp.scrollLeft >= h) vp.scrollLeft -= h; // 无缝循环
+                }
+                raf = requestAnimationFrame(step);
+            }
+
+            // 悬停暂停 / 手动滚动后短暂暂停自动滚动
+            vp.addEventListener('mouseenter', () => { hover = true; });
+            vp.addEventListener('mouseleave', () => { hover = false; });
+            vp.addEventListener('wheel', () => hold(2200), { passive: true });
+            vp.addEventListener('touchstart', () => hold(2200), { passive: true });
+
+            // 鼠标拖拽横向滚动（区分点击与拖拽）
+            vp.addEventListener('mousedown', e => {
+                down = true; moved = false; dragging = true;
+                sx = e.clientX; sc = vp.scrollLeft;
+                vp.classList.add('dragging');
+            });
+            window.addEventListener('mousemove', e => {
+                if (!down) return;
+                const dx = e.clientX - sx;
+                if (Math.abs(dx) > 4) moved = true;
+                if (moved) vp.scrollLeft = sc - dx;
+            });
+            window.addEventListener('mouseup', () => {
+                if (!down) return;
+                down = false; dragging = false;
+                vp.classList.remove('dragging');
+                if (moved) { suppressClick = true; hold(2200); }
+            });
+            vp.addEventListener('click', e => {
+                if (suppressClick) { e.preventDefault(); e.stopPropagation(); suppressClick = false; }
+            }, true);
+            vp.addEventListener('dragstart', e => e.preventDefault());
+
+            requestAnimationFrame(step);
+        });
+
+        /* ============ GSAP 首屏动画 ============ */
+        if (typeof gsap !== 'undefined' && !reduced) {
+            const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+            tl.from('#home h1', { opacity: 0, y: 48, duration: 0.9 })
+              .from('#home .hero-sub', { opacity: 0, y: 28, duration: 0.7 }, '-=0.5')
+              .from('#home .btn-primary, #home .btn-ghost', { opacity: 0, y: 20, duration: 0.5, stagger: 0.12 }, '-=0.4')
+              .from('#home .avatar-frame', { opacity: 0, scale: 0.94, duration: 1 }, '-=0.9');
+        }
+    });
+    </script>
+</body>
+</html>
