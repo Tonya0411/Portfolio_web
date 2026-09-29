@@ -1,6 +1,6 @@
 # YT.Ocean 个人作品集 | YT.Ocean Portfolio
 
-> 建筑学学生的个人作品集网站，收录实体模型、3D 建模、文创与艺术作品。
+> 建筑学学生的个人作品集网站
 
 > A personal portfolio website by an architecture student, showcasing physical models, 3D modeling, self-made merch, and artworks.
 
@@ -11,9 +11,9 @@
 
 ## 简介 / About
 
-**中文**：这是 YT.Ocean 的个人作品集，收录了建筑学学习与实践中的代表作品，分三类展示——实体模型、3D 模型、文创与艺术。支持中英双语、响应式布局、深蓝星空 + 极光动态背景与流畅滚动动画。
+**中文**：这是 YT.Ocean 的个人作品集，收录了建筑学学习与实践中的代表作品，分三类展示——实体模型、3D 模型、文创与艺术。
 
-**English**: This is YT.Ocean's personal portfolio, collecting representative works from architecture studies and practice, presented in three categories — Physical Models, 3D Models, and Merch & Artworks. It features bilingual (Chinese/English) support, responsive layout, a deep-blue starfield + aurora animated background, and smooth scroll animations.
+**English**: This is YT.Ocean's personal portfolio, collecting representative works from architecture studies and practice, presented in three categories — Physical Models, 3D Models, and Merch & Artworks.
 
 ## 功能特性 / Features
 
