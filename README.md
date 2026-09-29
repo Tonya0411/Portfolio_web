@@ -1,55 +1,64 @@
-# Designer Portfolio Website
+# YT.Ocean 个人作品集 | YT.Ocean Portfolio
 
-A modern, minimalist portfolio website for showcasing design work, built with HTML5, CSS3, JavaScript, and GSAP animations.
+> 建筑学学生的个人作品集网站，收录实体模型、3D 建模、文创与艺术作品。
 
-## Features
+> A personal portfolio website by an architecture student, showcasing physical models, 3D modeling, self-made merch, and artworks.
 
-- Clean, minimalist design with focus on the work
-- Responsive layout that works on all devices
-- Smooth animations and transitions using GSAP
-- Filterable work gallery
-- Detailed project pages
-- About section with timeline for experience and education
-- Contact form
-- Mobile-friendly navigation
+🌐 **在线访问 / Live**
 
-## Technologies Used
+- GitHub Pages：<https://tonya0411.github.io/Portfolio_web/>
+- 腾讯云 CloudBase：<https://ytocean-d8gbvhq5me05c53ab-1497781587.tcloudbaseapp.com/>
 
-- HTML5
-- CSS3 with Tailwind CSS
-- JavaScript
-- GSAP (GreenSock Animation Platform)
-- Font Awesome icons
+## 简介 / About
 
-## Project Structure
+**中文**：这是 YT.Ocean 的个人作品集，收录了建筑学学习与实践中的代表作品，分三类展示——实体模型、3D 模型、文创与艺术。支持中英双语、响应式布局、深蓝星空 + 极光动态背景与流畅滚动动画。
+
+**English**: This is YT.Ocean's personal portfolio, collecting representative works from architecture studies and practice, presented in three categories — Physical Models, 3D Models, and Merch & Artworks. It features bilingual (Chinese/English) support, responsive layout, a deep-blue starfield + aurora animated background, and smooth scroll animations.
+
+## 功能特性 / Features
+
+- 中英双语切换 / Bilingual (Chinese/English) switching
+- 响应式布局 / Responsive layout
+- 深蓝星空 + Aurora 极光动态背景 / Starfield + aurora animated background
+- 作品分类横向轮播 + 手动拖拽滚动 / Categorized horizontal marquee with drag-to-scroll
+- Works 下拉菜单 + 分类子菜单 / Works dropdown with category submenus
+- 项目详情页 + 图片灯箱 / Detail pages with image lightbox
+- 关于我 + 联系表单 / About + Contact form
+
+## 技术栈 / Tech Stack
+
+- HTML5 · CSS3
+- Tailwind CSS（CDN 引入）/ via CDN
+- 原生 JavaScript / Vanilla JavaScript
+- GSAP 动画 / GSAP animations
+- Font Awesome 图标 / Font Awesome icons
+
+## 项目结构 / Project Structure
 
 ```
 /
-├── index.html          # Main portfolio page
-├── works/              # Project detail pages
+├── index.html            # 首页 / Homepage
+├── works/                # 17 个详情页 / 17 detail pages
 │   ├── work1.html
-│   └── ...
-├── css/                # CSS files
-│   └── style.css
-├── js/                 # JavaScript files
-│   └── script.js
-└── assets/             # Images and other assets
-    └── images/
+│   └── …
+├── assets.image/         # 本地图片备份（线上走 R2 图床）/ Local image backup (served via R2 CDN)
+├── Projects_document.md  # 项目内容清单 / Project content manifest
+└── README.md
 ```
 
-## How to Use
+## 本地运行 / Run Locally
 
-1. Clone or download the repository
-2. Open `index.html` in a web browser
-3. To view project details, click on any work item in the gallery
+无需构建，直接打开 `index.html` 即可；或用静态服务器：
 
-## Customization
+```bash
+npx serve .
+```
 
-- Replace the images in `assets/images/` with your own work
-- Update the text content in `index.html` and the work detail pages
-- Modify the color scheme in the Tailwind CSS configuration
-- Adjust animations in the JavaScript files
+## 部署 / Deployment
 
-## License
+- **GitHub Pages**：源为 `main` 分支根目录。
+- **腾讯云 CloudBase**：通过 `@cloudbase/cli` 的 `cloudbase hosting deploy` 部署。
 
-This project is licensed under the MIT License.
+## 许可 / License
+
+MIT
